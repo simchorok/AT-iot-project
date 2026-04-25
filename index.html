@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greep Livestock IoT Planning Dashboard</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // 아이콘 컴포넌트 간소화 (Lucide 라이브러리 사용)
+        const Icon = ({ name, className }) => <i data-lucide={name} className={className}></i>;
+
+        const PlanDashboard = () => {
+            const [activeStep, setActiveStep] = useState(0);
+
+            const steps = [
+                {
+                    id: 0,
+                    title: "Context & Analysis",
+                    file: "context.md",
+                    desc: "축산 도메인 분석 및 타겟 설정",
+                    content: `## 1. 프로젝트 개요\n- 서비스명: Greep Livestock IoT\n- 목표: IoT 센서 데이터 기반 질병/발정 조기 감지\n\n## 2. 핵심 지표\n- 체온, 활동량, 반추량, 가스 배출량\n\n## 3. 타겟\n- 대규모 한우/낙농 농가 관리자`
+                },
+                {
+                    id: 1,
+                    title: "User Workflow",
+                    file: "userflow.md",
+                    desc: "농장주 대응 시나리오",
+                    content: `## [알림 발생 시나리오]\n1. 센서: 활동량 급증 감지\n2. 서버: 발정 징후 판단 (정확도 92%)\n3. 앱: 농장주에게 '수정 적기' 푸시 전송\n4. 농장주: 대시보드에서 해당 소 이력 확인`
+                },
+                {
+                    id: 2,
+                    title: "Feature Spec",
+                    file: "feature-spec.md",
+                    desc: "대시보드 기능 명세",
+                    content: `### [주요 기능]\n- 실시간 건강 스코어 보드\n- 가스 배출 기반 소화 장애 예측\n- 개체별 생체 리듬 그래프`
+                }
+            ];
+
+            React.useEffect(() => {
+                // Lucide 아이콘 렌더링
+                if (window.lucide) window.lucide.createIcons();
+            }, [activeStep]);
+
+            return (
+                <div className="flex flex-col h-screen bg-slate-50">
+                    <header className="bg-[#1a4731] text-white p-4 flex justify-between items-center shadow-md">
+                        <div className="flex items-center gap-2">
+                            <h1 className="text-xl font-bold tracking-tight">Greep IoT Planning Hub</h1>
+                        </div>
+                        <div className="text-xs bg-[#2d5a44] px-3 py-1 rounded-full">AI-Powered PM Tool</div>
+                    </header>
+
+                    <div className="flex flex-1 overflow-hidden">
+                        <nav className="w-64 bg-white border-r border-slate-200 p-4">
+                            {steps.map((step, idx) => (
+                                <button
+                                    key={step.id}
+                                    onClick={() => setActiveStep(idx)}
+                                    className={`w-full text-left p-4 mb-2 rounded-xl transition-all ${
+                                        activeStep === idx ? 'bg-green-50 border border-green-200 text-green-800' : 'text-slate-500 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    <div className="text-sm font-bold">{step.title}</div>
+                                    <div className="text-[10px] opacity-60">{step.file}</div>
+                                </button>
+                            ))}
+                        </nav>
+
+                        <main className="flex-1 p-10 overflow-y-auto">
+                            <div className="max-w-3xl mx-auto">
+                                <div className="mb-8">
+                                    <h2 className="text-3xl font-extrabold text-slate-800">{steps[activeStep].title}</h2>
+                                    <p className="text-slate-500 mt-2">{steps[activeStep].desc}</p>
+                                </div>
+
+                                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                                    <div className="bg-slate-50 px-4 py-2 border-b text-xs font-mono text-slate-400 flex justify-between">
+                                        <span>{steps[activeStep].file}</span>
+                                        <span>Markdown Viewer</span>
+                                    </div>
+                                    <div className="p-8">
+                                        <pre className="whitespace-pre-wrap text-slate-700 font-sans leading-relaxed">
+                                            {steps[activeStep].content}
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<PlanDashboard />);
+    </script>
+</body>
+</html>
