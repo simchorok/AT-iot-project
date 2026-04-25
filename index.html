@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Agricultural Technology IoT Planning Dashboard</title>
+    <title>Greep Livestock IoT PM Hub</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+        .markdown-body pre { background-color: #1e293b; color: #f8fafc; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
-
-        // 아이콘 컴포넌트 간소화 (Lucide 라이브러리 사용)
-        const Icon = ({ name, className }) => <i data-lucide={name} className={className}></i>;
+        const { useState, useEffect } = React;
 
         const PlanDashboard = () => {
             const [activeStep, setActiveStep] = useState(0);
@@ -29,73 +27,153 @@
             const steps = [
                 {
                     id: 0,
-                    title: "Context & Analysis",
+                    title: "01. Context",
                     file: "context.md",
-                    desc: "축산 도메인 분석 및 타겟 설정",
-                    content: `## 1. 프로젝트 개요\n- 서비스명: Greep Livestock IoT\n- 목표: IoT 센서 데이터 기반 질병/발정 조기 감지\n\n## 2. 핵심 지표\n- 체온, 활동량, 반추량, 가스 배출량\n\n## 3. 타겟\n- 대규모 한우/낙농 농가 관리자`
+                    desc: "기획 배경 및 도메인 분석",
+                    content: `# STEP 1: Context & Analysis\n\n## 1. 프로젝트 개요\n- 서비스명: Greep Livestock IoT\n- 목표: 소의 생체 데이터(체온, 활동량, 반추, 가스) 분석을 통한 정밀 축산 구현\n\n## 2. 핵심 페르소나\n- 성명: 박축산 (58세, 한우 150두 사육)\n- 니즈: 야간 분만 감지, 질병 초기 발견을 통한 폐사율 감소\n\n## 3. 도메인 지식\n- 정상 체온: 38.5~39.5도\n- 발정 징후: 활동량 급증 & 반추량 감소`
                 },
                 {
                     id: 1,
-                    title: "User Workflow",
+                    title: "02. User Workflow",
                     file: "userflow.md",
-                    desc: "농장주 대응 시나리오",
-                    content: `## [알림 발생 시나리오]\n1. 센서: 활동량 급증 감지\n2. 서버: 발정 징후 판단 (정확도 92%)\n3. 앱: 농장주에게 '수정 적기' 푸시 전송\n4. 농장주: 대시보드에서 해당 소 이력 확인`
+                    desc: "사용자 경험 동선 설계",
+                    content: `# STEP 2: User Workflow\n\n## 1. 주요 시나리오: 질병 의심 알림\n1. [IoT 센서] 체온 상승(40.2도) 및 활동량 저하 감지\n2. [서버] 이상 데이터 판정 및 분석 엔진 가동\n3. [앱] 농장주에게 '긴급: 105번 소 고열 발생' 푸시 발송\n4. [대시보드] 농장주가 해당 소의 24시간 생체 그래프 확인\n5. [액션] 버튼 클릭으로 담당 수의사에게 데이터 전송`
                 },
                 {
                     id: 2,
-                    title: "Feature Spec",
+                    title: "03. Feature Spec",
                     file: "feature-spec.md",
-                    desc: "대시보드 기능 명세",
-                    content: `### [주요 기능]\n- 실시간 건강 스코어 보드\n- 가스 배출 기반 소화 장애 예측\n- 개체별 생체 리듬 그래프`
+                    desc: "상세 기능 요구사항 명세",
+                    content: `# STEP 3: Feature Specification\n\n## 1. 실시간 대시보드 위젯\n- **건강 지표**: 4가지 데이터 기반 'Health Score' (0~100)\n- **가스 배출량**: 일일 트름/방구 횟수 시각화\n\n## 2. 알림 로직 (Notification)\n- **긴급(Red)**: 체온 40도 이상, 6시간 이상 활동 없음\n- **주의(Yellow)**: 반추량 평소 대비 20% 감소`
+                },
+                {
+                    id: 3,
+                    title: "04. System Design",
+                    file: "system-design.md",
+                    desc: "시스템 및 데이터 설계",
+                    content: `# STEP 4: System Design\n\n## 1. Data Schema (Table: Cow_Bio_Logs)\n- cow_id (FK)\n- timestamp (DateTime)\n- body_temp (Float)\n- activity_level (Int)\n- rumination_time (Int)\n- gas_count (Int)\n\n## 2. API Endpoint\n- POST /api/v1/sensor/data : IoT 기기 데이터 수신`
+                },
+                {
+                    id: 4,
+                    title: "05. QA Checklist",
+                    file: "qa-checklist.md",
+                    desc: "품질 검증 시나리오",
+                    content: `# STEP 5: QA Checklist\n\n- [ ] 네트워크 단절 시 기기 내 데이터 버퍼링 후 재전송 확인\n- [ ] 다수의 기기(200개 이상) 동시 접속 시 서버 부하 테스트\n- [ ] 영하 20도, 영상 40도 극한 환경에서의 센서 정확도 검증\n- [ ] 푸시 알림 수신 지연 시간이 5초 이내인가?`
                 }
             ];
 
-            React.useEffect(() => {
-                // Lucide 아이콘 렌더링
-                if (window.lucide) window.lucide.createIcons();
-            }, [activeStep]);
+            const downloadFile = (filename, content) => {
+                const element = document.createElement("a");
+                const file = new Blob([content], {type: 'text/markdown'});
+                element.href = URL.createObjectURL(file);
+                element.download = filename;
+                document.body.appendChild(element);
+                element.click();
+            };
+
+            const copyToClipboard = (text) => {
+                navigator.clipboard.writeText(text);
+                alert("마크다운 내용이 복사되었습니다!");
+            };
 
             return (
-                <div className="flex flex-col h-screen bg-slate-50">
-                    <header className="bg-[#1a4731] text-white p-4 flex justify-between items-center shadow-md">
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-xl font-bold tracking-tight">Greep IoT Planning Hub</h1>
+                <div className="flex flex-col h-screen overflow-hidden">
+                    {/* 상단 바 */}
+                    <header className="bg-slate-900 text-white p-4 flex justify-between items-center shadow-xl">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-green-500 p-2 rounded-lg">
+                                <i className="lucide-layout-grid w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h1 className="text-lg font-extrabold tracking-tight">Greep IoT PM Hub</h1>
+                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Livestock Integrated Management</p>
+                            </div>
                         </div>
-                        <div className="text-xs bg-[#2d5a44] px-3 py-1 rounded-full">AI-Powered PM Tool</div>
+                        <div className="flex gap-2">
+                            <span className="text-xs bg-slate-800 px-3 py-1 rounded-full border border-slate-700 text-slate-300">V 1.0.0</span>
+                        </div>
                     </header>
 
                     <div className="flex flex-1 overflow-hidden">
-                        <nav className="w-64 bg-white border-r border-slate-200 p-4">
+                        {/* 사이드바 메뉴 */}
+                        <nav className="w-80 bg-white border-r border-slate-200 p-6 overflow-y-auto">
+                            <div className="mb-8 text-slate-400 text-[11px] font-black uppercase tracking-widest">Workflow Steps</div>
                             {steps.map((step, idx) => (
                                 <button
                                     key={step.id}
                                     onClick={() => setActiveStep(idx)}
-                                    className={`w-full text-left p-4 mb-2 rounded-xl transition-all ${
-                                        activeStep === idx ? 'bg-green-50 border border-green-200 text-green-800' : 'text-slate-500 hover:bg-slate-50'
+                                    className={`w-full flex items-center gap-4 p-4 mb-3 rounded-2xl transition-all text-left ${
+                                        activeStep === idx 
+                                        ? 'bg-green-50 border-2 border-green-500/20 text-green-900 shadow-sm' 
+                                        : 'text-slate-500 hover:bg-slate-50 border-2 border-transparent'
                                     }`}
                                 >
-                                    <div className="text-sm font-bold">{step.title}</div>
-                                    <div className="text-[10px] opacity-60">{step.file}</div>
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${
+                                        activeStep === idx ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-400'
+                                    }`}>
+                                        {idx + 1}
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="text-sm font-bold leading-tight mb-1">{step.title}</div>
+                                        <div className="text-[11px] opacity-60 leading-tight">{step.desc}</div>
+                                    </div>
                                 </button>
                             ))}
                         </nav>
 
-                        <main className="flex-1 p-10 overflow-y-auto">
-                            <div className="max-w-3xl mx-auto">
-                                <div className="mb-8">
-                                    <h2 className="text-3xl font-extrabold text-slate-800">{steps[activeStep].title}</h2>
-                                    <p className="text-slate-500 mt-2">{steps[activeStep].desc}</p>
+                        {/* 본문 에디터/뷰어 */}
+                        <main className="flex-1 bg-[#f1f5f9] p-10 overflow-y-auto">
+                            <div className="max-w-4xl mx-auto">
+                                <div className="flex justify-between items-center mb-8">
+                                    <div>
+                                        <h2 className="text-3xl font-black text-slate-900 tracking-tight">{steps[activeStep].title}</h2>
+                                        <p className="text-slate-500 mt-1">{steps[activeStep].file} 작성 단계</p>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button 
+                                            onClick={() => copyToClipboard(steps[activeStep].content)}
+                                            className="flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm"
+                                        >
+                                            <i className="lucide-copy w-4 h-4"></i> 복사
+                                        </button>
+                                        <button 
+                                            onClick={() => downloadFile(steps[activeStep].file, steps[activeStep].content)}
+                                            className="flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-green-700 transition-all shadow-lg shadow-green-200"
+                                        >
+                                            <i className="lucide-download w-4 h-4"></i> .md 다운로드
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                                    <div className="bg-slate-50 px-4 py-2 border-b text-xs font-mono text-slate-400 flex justify-between">
-                                        <span>{steps[activeStep].file}</span>
-                                        <span>Markdown Viewer</span>
+                                {/* 마크다운 컨텐츠 박스 */}
+                                <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden min-h-[600px] flex flex-col">
+                                    <div className="bg-slate-50 px-6 py-3 border-b border-slate-200 flex justify-between items-center">
+                                        <div className="flex gap-2">
+                                            <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                                            <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                                            <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                                        </div>
+                                        <span className="text-[11px] font-bold text-slate-400 font-mono tracking-widest">{steps[activeStep].file}</span>
                                     </div>
-                                    <div className="p-8">
-                                        <pre className="whitespace-pre-wrap text-slate-700 font-sans leading-relaxed">
+                                    <div className="p-10 flex-1">
+                                        <pre className="whitespace-pre-wrap text-slate-700 font-sans leading-relaxed text-base">
                                             {steps[activeStep].content}
                                         </pre>
+                                    </div>
+                                </div>
+
+                                <div className="mt-10 p-6 bg-blue-600 rounded-3xl text-white flex items-start gap-4 shadow-xl shadow-blue-100">
+                                    <div className="bg-blue-400 p-2 rounded-xl">
+                                        <i className="lucide-sparkles w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-lg mb-1">PM을 위한 시니어 가이드</h4>
+                                        <p className="text-blue-100 text-sm leading-relaxed">
+                                            {activeStep === 0 && "축산 도메인은 환경 변수가 큽니다. 농장주가 '언제 사료를 바꿨는지', '언제 약을 투여했는지' 메모할 수 있는 기능도 context에 고려해보세요."}
+                                            {activeStep === 1 && "농장주는 작업 중 장갑을 끼고 있을 때가 많습니다. 주요 버튼은 크게, 알림음은 시끄러운 환경에서도 잘 들리게 설계해야 합니다."}
+                                            {activeStep === 2 && "데이터 시각화보다 '이상 개체 리스트'를 최상단에 배치하는 것이 실질적인 운영에 훨씬 도움이 됩니다."}
+                                            {activeStep >= 3 && "개발자와 소통할 때 데이터 전송 주기(1분 단위 vs 10분 단위)에 따른 배터리 소모량 차이를 꼭 체크하세요."}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
